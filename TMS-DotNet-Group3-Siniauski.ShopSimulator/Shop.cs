@@ -37,17 +37,63 @@ namespace ShopSimulator
 
         public void Run()
         {
-            return;
+            CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+            CancellationToken token = cancelTokenSource.Token;
+            List<Task> CashTasks = new List<Task>();
+            for (int i = 1; i <= _countOfCashes; i++)
+            {
+                Cash cash = new Cash(i, this);
+                _cashes.Add(cash);
+                CashTasks.Add(Task.Factory.StartNew(() => cash.StartWork(token)));
+            }
+            Task generateRandomCustomersTask = Task.Factory.StartNew(() => Customer.GenerateRandomCustomers(_products, _cashes, token));
+            Task.Delay(_workTimeInSeconds * 1000).Wait();
+            cancelTokenSource.Cancel();
+            generateRandomCustomersTask.Wait();
+            Task.WaitAll(CashTasks.ToArray());
+            PrintInfo();
         }
 
         internal void PrintInfo()
         {
-            return;
+            Console.Clear();
+            foreach (Cash cash in _cashes)
+            {
+                cash.PrintWorkResult();
+            }
+            Console.WriteLine(new string('*', 40));
+            Console.WriteLine($"Shop:" +
+                $"\n\twork time - {_workTimeInSeconds} s" +
+                $"\n\ttotal count of customers - {CountOfCustomers}" +
+                $"\n\ttotal cash - {Math.Round(TotalCash, 2)}");
+            Console.WriteLine(new string('*', 40));
         }
 
         public void PrintConsoleImage()
         {
-            return;
+            Console.Clear();
+            foreach (Cash cash in _cashes)
+            {
+                Console.WriteLine($"{new string('-', 13)}");
+                Console.WriteLine($"-- C A S H --\tCount of customers: {cash.CountOfCustomers}");
+                Console.WriteLine($"--    {cash.Number}    --\tTotal cash: {Math.Round(cash.TotalCash, 2)}");
+                Console.WriteLine($"{new string('-', 13)}");
+                for (int i = 0; i < cash.Customers.Count; i++)
+                {
+                    Console.Write("   () ");
+                }
+                Console.WriteLine();
+                for (int i = 0; i < cash.Customers.Count; i++)
+                {
+                    Console.Write(@"  /||\");
+                }
+                Console.WriteLine();
+                for (int i = 0; i < cash.Customers.Count; i++)
+                {
+                    Console.Write(@"   /\ ");
+                }
+                Console.WriteLine("\n");
+            }
         }
     }
 }
