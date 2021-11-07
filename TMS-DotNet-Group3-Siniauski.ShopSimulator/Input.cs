@@ -4,16 +4,38 @@ namespace ShopSimulator
 {
     public class Input
     {
-        // Ввод пользователем количества касс от 1 до 5 (Татьяна)
         public static int EnterCountOfCashes()
         {
-            return 0;
+            int countOfCashes = 0;
+            do
+            {
+                Console.WriteLine("Enter count of cashes (min = 1, max = 5): ");
+                if (!int.TryParse(Console.ReadLine(), out countOfCashes) || countOfCashes > 5 || countOfCashes < 1)
+                {
+                    Console.WriteLine("Incorrect value!");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+            return countOfCashes;
         }
 
-        // Ввод пользователем времени работы магазина в секундах (Татьяна)
         public static int EnterWorkTimeInSeconds()
         {
-            return 0;
+            int workTime = 0;
+            do
+            {
+                Console.WriteLine("Enter shop work time (in seconds): ");
+                if (!int.TryParse(Console.ReadLine(), out workTime) || workTime < 0)
+                {
+                    Console.WriteLine("Incorrect value!");
+                    continue;
+                }
+                break;
+            }
+            while (true);
+            return workTime;
         }
     }
 }

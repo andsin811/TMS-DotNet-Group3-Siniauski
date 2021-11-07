@@ -15,10 +15,16 @@ namespace ShopSimulator
             Cart = cart;
         }
 
-        // Генерация случайных пользователей со случайными корзинами с переодичностью в 500 мс пока !token.IsCancellationRequested и добавление в одну из наименьших очередей (Татьяна)
         public static void GenerateRandomCustomers(List<Product> products, List<Cash> cashes, CancellationToken token)
         {
-            return;
+            Random random = new Random();
+            while (!token.IsCancellationRequested)
+            {
+                Customer customer = new Customer(Cart.GenerateRandomCart(products));
+                List<Cash> cashesWithMinCountOfCustomers = cashes.Where(cash => cash.Customers.Count == cashes.Min(c => c.Customers.Count)).ToList();
+                cashesWithMinCountOfCustomers[random.Next(0, cashesWithMinCountOfCustomers.Count)].Customers.Enqueue(customer);
+                Task.Delay(500).Wait();
+            }
         }
     }
 }
