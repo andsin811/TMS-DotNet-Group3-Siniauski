@@ -18,10 +18,17 @@ namespace ShopSimulator
             Products = products;
         }
 
-        // Генерация корзины со случайным количесвом случайных продуктов из переданного списка (Татьяна)
         public static Cart GenerateRandomCart(List<Product> products)
+
         {
-            return new Cart(products);
+            List<Product> cartProducts = new List<Product>();
+            Random random = new Random();
+            int countOfProducts = random.Next(1, products.Count + 1);
+            while (cartProducts.Count < countOfProducts)
+            {
+                cartProducts.Add(products[random.Next(0, products.Count)]);
+            }
+            return new Cart(cartProducts);
         }
     }
 }
